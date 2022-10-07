@@ -1,0 +1,17 @@
+/* CSS Document - Author: Peter Bishop */
+
+.container {
+	margin-top: 30px;
+}
+
+.frontend-logo {
+	height: 115px;
+	padding-top: 25px;
+	width: auto;
+	float: left;
+	padding-right: 10px;
+}
+
+.table tbody>tr>td.vert-align{
+    vertical-align: middle;
+}

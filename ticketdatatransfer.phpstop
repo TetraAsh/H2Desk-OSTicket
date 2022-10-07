@@ -1,0 +1,398 @@
+<?php
+
+include('assets/init.php');
+
+
+	#	1 - Need to ensure all users are created on OSTicket
+	#	2 - Need to ensure all agents are created and $admin->TranslateStaffID is setup correctly for mappings
+
+
+
+
+ ?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title><?php echo $settings['system_name']; ?></title>
+
+    <!-- Bootstrap -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <style>
+		/*.table > tbody > tr > td {
+			border-top: none;
+		}*/
+	</style>
+  </head>
+  <body>
+  
+  
+  
+  
+  	<div class="container">
+    	<div class="row">
+            <div class="col-md-12 text-center">
+                <img src="assets/images/tetrabyte_logo_transparent.png" class="frontend-logo" />
+                <h1>Tetrabyte Ticket Transfer</h1>
+                <p></p>
+                <p style="font-weight: bold;">For Engineer use only.</p>
+            </div>
+        </div>
+        
+		
+		<!-- TESTING AREA -->
+		
+		<div class="row">
+		
+		<?php
+		
+			#$id = $admin->GetUserID( "scda@tetrabyte.com");
+			#echo $id;
+			
+		?>
+		
+		</div>
+		<!-- /TESTING AREA -->
+		
+		
+        <div class="row">
+        	<div class="col-md-12">
+            	<h3 class="page-header" style="margin-top: 20px; "><span style="font-size: 72px;"> 
+				</h3>
+				
+				<?php
+					
+					$OSTicket = array();
+					$OSTicketCData = array();
+					$OSThread = array();
+					$OSThreadCollaborator = array();
+					$OSThreadEntry = array();
+			#		$TicketIDs = array();
+			#		
+			#		$OSTickets = $admin->OSTicketSelect();
+			#		foreach ( $OSTickets as $OSTicket ) {
+			#			array_push( $TicketIDs, $OSTicket['number'] );
+			#		}
+			#		echo "<br/>";
+			#		print_r($TicketIDs);
+			#		echo "<br/>";
+					
+					$a = 1;
+					$tickets = $admin->TicketSelect();					
+					foreach ($tickets as $ticket) {
+
+
+	echo "<br/><h2>Ticket $a:</h2><br/>";
+						$a++;
+						foreach ($ticket as $key => $val) {
+							
+			#				if ( in_array( $ticket['ticket'] , $TicketIDs ) ) { break 2; } #if already inserted, break now
+						
+							if ($key == "ticket") {
+								$OSTicket['number'] = $val;
+								echo $key." = ".$val." Setting OSTicket-number = ".$OSTicket['number']."<br/>";
+								
+							}elseif ($key == "user_id") {
+								
+								$user_id = $admin->TranslateUserID($val);
+								$OSTicket['user_id'] = $user_id;
+								echo $key." = ".$val." translating to OSTicket-user_id = ".$user_id."<br/>";
+								
+							}elseif ($key == "subject") {
+								$OSTicketCData['subject'] = $val;
+								echo $key." = ".$val." Setting OSTicketCData-subject = ".$OSTicketCData['subject']."<br/>";
+								
+							}elseif ($key == "priority") {
+								$priority = $admin->TranslatePriority($val);
+								$OSTicketCData['priority'] = $val;
+								echo $key." = ".$val." translating to OSTicketCData-priority = ".$OSTicketCData['priority']."<br/>";
+								
+							}elseif ($key == "date") {
+								
+								$OSTicket['created'] = $val;
+								$OSTicket['created'] = date("Y-m-d H:i:s",$OSTicket['created']);
+								echo $key." = ".$val." Setting OSTicket-created = ".$OSTicket['created']."<br/>";
+								
+								$OSThread['created'] = $val;
+								$OSThread['created'] = date("Y-m-d H:i:s",$OSThread['created']);
+								echo $key." = ".$val." Setting OSThread-created = ".$OSThread['created']."<br/>";
+								
+								$OSThreadCollaborator['created'] = $val;
+								$OSThreadCollaborator['created'] = date("Y-m-d H:i:s",$OSThreadCollaborator['created']);
+								echo $key." = ".$val." Setting OSThreadCollaborator-created = ".$OSThreadCollaborator['created']."<br/>";
+								
+							}elseif ($key == "lastactivity") {
+								
+								$OSTicket['lastupdate'] = $val;
+								$OSTicket['lastupdate'] = date("Y-m-d H:i:s",$OSTicket['lastupdate']); 
+								echo $key." = ".$val." Setting OSTicket-lastupdate = ".$OSTicket['lastupdate']."<br/>";
+								
+								$OSTicket['updated'] = $val;
+								$OSTicket['updated'] = date("Y-m-d H:i:s",$OSTicket['updated']);
+								echo $key." = ".$val." Setting OSTicket-updated = ".$OSTicket['updated']."<br/>";
+								
+								$OSTicket['closed'] = $val;
+								$OSTicket['closed'] = date("Y-m-d H:i:s",$OSTicket['closed']);
+								echo $key." = ".$val." Setting OSTicket-closed = ".$OSTicket['closed']."<br/>";
+								
+								$OSThread['lastmessage'] = $val;
+								$OSThread['lastmessage'] = date("Y-m-d H:i:s",$OSThread['lastmessage']);
+								echo $key." = ".$val." Setting OSThread-lastmessage = ".$OSThread['lastmessage']."<br/>";
+								
+								$OSThreadCollaborator['updated'] = $val;
+								$OSThreadCollaborator['updated'] = date("Y-m-d H:i:s",$OSThreadCollaborator['updated']);
+								echo $key." = ".$val." Setting OSThreadCollaborator-updated = ".$OSThreadCollaborator['updated']."<br/>";
+								
+							}elseif ($key == "flag") {
+								$staff_id = $admin->TranslateStaffID($val);
+								$OSTicket['staff_id'] = $staff_id;
+								echo $key." = ".$val." translating to OSTicket-staff_id = ".$OSTicket['staff_id']."<br/>";
+								
+							}elseif ($key == "status") {
+								$status = $admin->TranslateStatus($val);
+								$OSTicket['status_id'] = $status;
+								echo $key." = ".$val." translating to OSTicket-status = ".$OSTicket['status_id']."<br/>";
+								
+							}elseif ($key == "cc") {
+								$cc_emails = explode(" ",$val);
+								$i = 1;
+								foreach ($cc_emails as $email) {
+									echo "cc_email(".$i.") = ".$email."<br/>";
+									$i++;
+									
+								}						
+							}else{
+								echo $key." = ".$val."<br/>";
+							}
+							
+						}
+						
+						
+						$OSTicket['user_email_id'] = "0";
+						$OSTicket['dept_id'] = "1";
+						$OSTicket['sla_id'] = "0";
+						$OSTicket['topic_id'] = "10";
+						$OSTicket['team_id'] = "0";
+						$OSTicket['email_id'] = "0";
+						$OSTicket['lock_id'] = "0";
+						$OSTicket['flags'] = "0";
+						$OSTicket['ip_address'] = "94.30.0.105";
+						$OSTicket['source'] = "other";
+						$OSTicket['source_extra'] = "NULL";
+						$OSTicket['isoverdue'] = "0";
+						$OSTicket['isanswered'] = "1";
+						$OSTicket['duedate'] = "NULL";
+						$OSTicket['est_duedate'] = "NULL";
+						$OSTicket['reopened'] = "NULL";
+						
+	$admin->TicketInsert( $OSTicket['number'], $OSTicket['user_id'], $OSTicket['user_email_id'], $OSTicket['status_id'], $OSTicket['dept_id'], $OSTicket['sla_id'], $OSTicket['topic_id'], $OSTicket['staff_id'], $OSTicket['team_id'], $OSTicket['email_id'], $OSTicket['lock_id'], $OSTicket['flags'], $OSTicket['ip_address'], $OSTicket['source'], $OSTicket['source_extra'], $OSTicket['isoverdue'], $OSTicket['isanswered'], $OSTicket['duedate'], $OSTicket['est_duedate'], $OSTicket['reopened'], $OSTicket['closed'], $OSTicket['lastupdate'], $OSTicket['created'], $OSTicket['updated']);
+						
+						
+						#Must run after submitting ticket to DB 
+						$ticket_id = $admin->GetOSTicketID($ticket['ticket']);
+
+
+						$OSFormEntry['form_id'] = '2';
+						$OSFormEntry['object_id'] = $ticket_id;
+						$OSFormEntry['object_type'] = 'T';
+						$OSFormEntry['sort'] = '0';
+						$OSFormEntry['extra'] = '{"disable":[]}';
+						$OSFormEntry['created'] = $OSTicket['created'];
+						$OSFormEntry['updated'] = $OSTicket['lastupdate'];
+
+	$FormEntry['id'] = $admin->FormEntryInsert( $OSFormEntry['form_id'], $OSFormEntry['object_id'], $OSFormEntry['object_type'], $OSFormEntry['sort'], $OSFormEntry['extra'], $OSFormEntry['created'], $OSFormEntry['updated'] );
+	
+						$OSFormEntryValue['entry_id'] = $FormEntry['id']; 
+						$OSFormEntryValue['field_id'] = '20';
+						$OSFormEntryValue['value'] = $OSTicketCData['subject'];
+						$OSFormEntryValue['value_id'] = 'NULL';
+	$admin->FormEntryValueInsert( $OSFormEntryValue['entry_id'], $OSFormEntryValue['field_id'], $OSFormEntryValue['value'], $OSFormEntryValue['value_id']  );
+						
+						$OSFormEntryValue['entry_id'] = $FormEntry['id'];
+						$OSFormEntryValue['field_id'] = '22';
+						$OSFormEntryValue['value'] = 'NULL';
+						$OSFormEntryValue['value_id'] = '2';
+	$admin->FormEntryValueInsert( $OSFormEntryValue['entry_id'], $OSFormEntryValue['field_id'], $OSFormEntryValue['value'], $OSFormEntryValue['value_id']  );
+						
+						$OSTicketCData['id'] = $ticket_id;
+						echo "Setting OSTicketCData-id = ".$OSTicketCData['id']."<br/>";
+						
+						$OSThread['object_id'] = $ticket_id;
+						echo "Setting OSThread-object_id = ".$OSThread['object_id']."<br/>";
+
+	$admin->TicketCdataInsert($OSTicketCData['id'], $OSTicketCData['subject'], $OSTicketCData['priority']);				
+						
+						$OSThread['object_type'] = "T";
+						$OSThread['extra'] = "NULL";
+						$OSThread['lastresponce'] = "NULL";
+	$admin->ThreadInsert($OSThread['object_id'], $OSThread['object_type'], $OSThread['extra'], $OSThread['lastresponce'], $OSThread['lastmessage'], $OSThread['created']);
+						
+						$ThreadID = $admin->GetOSThreadID($ticket_id);
+						echo "<br/>ThreadID: ".$ThreadID."<br/>";
+						$OSThreadEntry['thread_id'] = $ThreadID; 
+						echo "Setting OSThreadEntry-id = ".$OSThreadEntry['thread_id']."<br/>";
+
+						$OSThreadCollaborator['thread_id'] = $ThreadID; 
+						echo "Setting OSThreadCollaborator-thread_id = ".$OSThreadCollaborator['thread_id']."<br/>";
+
+						$OSThreadCollaborator['flags'] = 3;
+						$OSThreadCollaborator['role'] = "M";
+						
+						$ticket['cc'] = strtolower($ticket['cc']);
+						if ( $ticket['cc'] != "" ) {
+
+	echo "<br/><h3>CC's:</h3><br/>";
+							$cc_emails = explode(" ",$ticket['cc']);
+							
+							echo "<br/>".print_r($cc_emails)."<br/>";
+							$cc_emails = array_unique ( $cc_emails );
+							echo "<br/>".print_r($cc_emails)."<br/>";
+							
+							$j = 1;
+							foreach ($cc_emails as $key => $val) {
+								echo "cc_email(".$j.") = ".$val."<br/>";
+								$j++;
+								$email_parts = explode("@",$val);
+								echo "<br/>";
+								print_r($email_parts);
+								echo "<br/>";
+								echo "email_parts(".$j.") = ".$email_parts['0']."<br/>";
+								$emailname = $email_parts['0']." - ".$email_parts['1'];
+								$OSThreadCollaborator['user_id'] = $admin->TranslateOSEmailtoID($val, $emailname); 
+
+								echo "cc-id: ".$OSThreadCollaborator['user_id']."<br/>";
+								if ( $OSThreadCollaborator['user_id'] != "" ) {
+	$admin->ThreadCollaboratorInsert($OSThreadCollaborator['flags'], $OSThreadCollaborator['thread_id'], $OSThreadCollaborator['user_id'], $OSThreadCollaborator['role'], $OSThreadCollaborator['created'], $OSThreadCollaborator['updated']);
+								}
+							}
+						}
+
+
+					
+						$threads = $admin->ThreadSelect($ticket['id']);
+	echo "<br/><h2>Thread:</h2><br/>";
+						
+						$i = 1;
+						foreach ($threads as $thread) {
+	echo "<h3>Post ".$i."</h3><br/>";
+							foreach ($thread as $key => $val) {
+								if ($key == "ticket_id") {
+									echo $key." = ".$val." translating to OSThread-id = ".$OSThreadEntry['thread_id']."<br/>";
+									
+								}elseif ($key == "user_id") {
+									$postuser_id = $admin->TranslatePostUser($val);
+									echo $key." = ".$val." translated to type = ".$postuser_id[0]." and id = ".$postuser_id[1]."<br/>";
+									if ( $postuser_id[0] == "agent" ) {
+										$OSThreadEntry['staff_id'] = $postuser_id[1];
+										$OSThreadEntry['user_id'] = 0;
+										$OSThreadEntry['flags'] = 576;
+										$OSThreadEntry['type'] = "R";
+									}elseif ($postuser_id[0] == "user" ) {
+										$OSThreadEntry['staff_id'] = 0;
+										$OSThreadEntry['user_id'] = $postuser_id[1];
+										$OSThreadEntry['flags'] = 64;
+										$OSThreadEntry['type'] = "M";
+									}
+									
+									
+								}elseif ($key == "subject") {
+									
+									$OSThreadEntry['title'] = $val;
+									echo $key." = ".$val." setting OSThreadEntry-title = ".$val."<br/>";
+									
+								}elseif ($key == "message") {
+									
+									$OSThreadEntry['body'] = $val;
+									echo $key." - setting OSThreadEntry-body = ".$val."<br/>";
+									
+								}elseif ($key == "date") {
+									echo $key." = ".date("Y-m-d H:i:s",$val)."<br/>";
+									$OSThreadEntry['created'] = date("Y-m-d H:i:s",$val);
+									
+								}elseif ($key == "firstpost") {
+									if($val == 1){
+										$OSThreadEntry['flags'] = 577;
+									}
+									echo $key." = ".$val." setting OSThreadEntry-type = ".$OSThreadEntry['flags']."<br/>";
+								}elseif ($key == "staffnote") {
+									if ($val == "1"){
+										$OSThreadEntry['type'] = "N";
+									}
+									echo $key." = ".$val." setting OSThreadEntry-type = ".$OSThreadEntry['type']."<br/>";
+								}elseif ($key == "ip") {
+									
+									$OSThreadEntry['ip_address'] = $val;
+									echo $key." = ".$val." setting OSThreadEntry-ip_address = ".$val."<br/>";
+								}else{
+									echo $key." = ".$val."<br/>";
+								}
+							}
+							echo "<br/>";
+							$i++;
+							
+							# $admin->TranslatePostUser($user_id)
+							$OSThreadEntry['pid'] = 0;        # parent id 
+							#$OSThreadEntry['staff_id'] = 0;
+							#$OSThreadEntry['user_id'] = 0;
+							#$OSThreadEntry['type'] = 0;			# M Message R Responce N Note
+							#$OSThreadEntry['flags'] = 0;         # WHAT IS THIS
+							$OSThreadEntry['poster'] = "Import";
+							$OSThreadEntry['editor'] = "NULL";
+							$OSThreadEntry['editor_type'] = "NULL";
+							$OSThreadEntry['source'] = "Other";
+							#$OSThreadEntry['title'] = 0;
+							#$OSThreadEntry['body'] = 0;
+							$OSThreadEntry['format'] = "html";
+							#$OSThreadEntry['ip_address'] = 0;
+							$OSThreadEntry['recipients'] = "NULL";
+							#$OSThreadEntry['created'] = 0;
+							$OSThreadEntry['updated'] = "0000-00-00 00:00:00";
+
+	$admin->ThreadEntryInsert($OSThreadEntry['pid'], $OSThreadEntry['thread_id'], $OSThreadEntry['staff_id'], $OSThreadEntry['user_id'], $OSThreadEntry['type'], $OSThreadEntry['flags'], $OSThreadEntry['poster'], $OSThreadEntry['editor'], $OSThreadEntry['editor_type'], $OSThreadEntry['source'], $OSThreadEntry['title'], $OSThreadEntry['body'], $OSThreadEntry['format'], $OSThreadEntry['ip_address'], $OSThreadEntry['recipients'], $OSThreadEntry['created'], $OSThreadEntry['updated']);
+
+						}
+															
+							
+						#die("Ticket Insert Complete!");
+
+							
+							
+						echo "<br/><hr><br/>";
+
+					
+					
+					}	
+				?>
+				  
+				
+				
+			</div>
+		</div>
+
+		
+		
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="assets/js/bootstrap.min.js"></script>
+    
+
+  </body>
+</html>
